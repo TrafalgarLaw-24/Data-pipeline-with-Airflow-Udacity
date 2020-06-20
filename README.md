@@ -48,7 +48,7 @@ airflow-data-pipeline
 
 Data resides in two directories of udacity buckets that contains files in JSON format:
 
-Log data: s3://udacity-dend/log_data
+Log data: s3://udacity-dend/log_data, 
 Song data: s3://udacity-dend/song_data
 
 ## About
