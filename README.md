@@ -6,7 +6,7 @@ A music streaming company, Sparkify, has decided that it is time to introduce mo
 
 The source data resides in S3 and needs to be processed in Sparkify's data warehouse in Amazon Redshift. The source datasets consist of JSON logs that tell about user activity in the application and JSON metadata about the songs the users listen to.
 
-##What is Apache Airflow?
+## What is Apache Airflow?
 Airflow a workflow management system developed by Airbnb. It is a platform to programmatically author, schedule and monitor workflows.
 
 Use airflow to author workflows as directed acyclic graphs (DAGs) of tasks. The airflow scheduler executes your tasks on an array of workers while following the specified dependencies. Rich command line utilities make performing complex surgeries on DAGs a snap. The rich user interface makes it easy to visualize pipelines running in production, monitor progress, and troubleshoot issues when needed.
