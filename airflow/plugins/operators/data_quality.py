@@ -13,17 +13,26 @@ class DataQualityOperator(BaseOperator):
                  *args, **kwargs):
 
         super(DataQualityOperator, self).__init__(*args, **kwargs)
-        self.tables = tables
+        self.check_stmts = check_stmts
         self.redshift_conn_id = redshift_conn_id
 
     def execute(self, context):
         redshift_hook = PostgresHook(self.redshift_conn_id)
-        for table in self.tables:
-            self.log.info(f"Data Quality is being checked for {table} table")
-            records = redshift_hook.get_records(f"SELECT COUNT(*) FROM {table}")
-            if len(records) < 1 or len(records[0]) < 1:
-                raise ValueError(f"Data quality check failed for the table. {table} returned no results")
-            num_records = records[0][0]
-            if num_records < 1:
-                raise ValueError(f"Data quality check failed for the table. {table} contained 0 rows")
-            self.log.info(f"Data quality check on table {table} passed with {records[0][0]} records")
+
+        for stmt in self.check_stmts:
+            result = int(redshift_hook.get_first(sql=stmt['sql'])[0])
+
+            # check if it is equal
+            if stmt['op'] == 'eq':
+                if result != stmt['val']:
+                    raise AssertionError(f"Check failed: {result} {stmt['op']} {stmt['val']}")
+            # check if it is not equal
+            elif stmt['op'] == 'ne':
+                if result == stmt['val']:
+                    raise AssertionError(f"Check failed: {result} {stmt['op']} {stmt['val']}")
+            # check if it is greater than
+            elif stmt['op'] == 'gt':
+                if result <= stmt['val']:
+                    raise AssertionError(f"Check failed: {result} {stmt['op']} {stmt['val']}")
+
+            self.log.info(f"Check passed: {result} {stmt['op']} {stmt['val']}")
